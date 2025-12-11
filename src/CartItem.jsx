@@ -9,27 +9,57 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
- 
+    // Iterar sobre el array usando reduce para sumar el totalPrice de cada ítem
+    const totalAmount = cart.reduce((cumulativeTotal, item) => {
+        // Obtenemos el costo unitario y lo multiplicamos por la cantidad
+        const unitCost = parseFloat(String(item.cost).replace('$', '')) || 0;
+        return cumulativeTotal + (unitCost * item.quantity); 
+    }, 0);
+
+    return totalAmount.toFixed(2);
   };
 
   const handleContinueShopping = (e) => {
-   
+    e.preventDefault();
+    // Llama a la función pasada desde el padre (para cambiar la vista a la lista de productos)
+    onContinueShopping();
+  };
+
+  const handleCheckoutShopping = (e) => {
+    alert('Functionality to be added for future reference');
   };
 
 
 
   const handleIncrement = (item) => {
+    // Dispatch updateQuantity para aumentar la cantidad en 1
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
   const handleDecrement = (item) => {
-   
+    // Si la cantidad es mayor que 1, decrementa.
+    if (item.quantity > 1) {
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    } else {
+      // Si la cantidad es 1 y se decrementa, llama a removeItem (Task 3: eliminar el ítem)
+      dispatch(removeItem({ name: item.name }));
+    }
   };
 
   const handleRemove = (item) => {
+    dispatch(removeItem({ name: item.name }));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    // Asumimos que item.cost es el costo unitario (como número) y item.quantity es la cantidad.
+    // Aunque en el Reducer ya actualizamos totalPrice, lo recalculamos para asegurar consistencia.
+    
+    // Asegurarse de que el costo unitario sea un número
+    const unitCost = parseFloat(String(item.cost).replace('$', '')) || 0;
+    
+    // Devolvemos el total del ítem con dos decimales
+    return (unitCost * item.quantity).toFixed(2);
   };
 
   return (
